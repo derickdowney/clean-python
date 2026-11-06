@@ -10,13 +10,13 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 let s:shortmess_save = &shortmess
 set shortmess+=aoO
-badd +1 tests/test_hello.py
 badd +1 src/clean_python/domain/entities/hello.py
-badd +0 pyproject.toml
-badd +0 term://~/projects/clean-python//9102:/bin/bash
+badd +1 pyproject.toml
+badd +1 term://~/projects/clean-python//9102:/bin/bash
+badd +1 ./tests/domain/test_hello.py
 argglobal
 %argdel
-edit tests/test_hello.py
+edit ./tests/domain/test_hello.py
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -70,7 +70,6 @@ if bufexists(fnamemodify("term://~/projects/clean-python//9102:/bin/bash", ":p")
 if &buftype ==# 'terminal'
   silent file term://~/projects/clean-python//9102:/bin/bash
 endif
-balt tests/test_hello.py
 setlocal foldmethod=expr
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
@@ -84,14 +83,13 @@ if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 6
-normal! 051|
+normal! 0
 wincmd w
 argglobal
 if bufexists(fnamemodify("src/clean_python/domain/entities/hello.py", ":p")) | buffer src/clean_python/domain/entities/hello.py | else | edit src/clean_python/domain/entities/hello.py | endif
 if &buftype ==# 'terminal'
   silent file src/clean_python/domain/entities/hello.py
 endif
-balt tests/test_hello.py
 setlocal foldmethod=expr
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
