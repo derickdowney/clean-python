@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 
 
@@ -18,3 +18,7 @@ class Priority(Enum):
 @dataclass(frozen=True)
 class Deadline:
     due_date: datetime
+
+    def __post_init__(self):
+        if self.due_date < datetime.now():
+            raise ValueError("Deadline cannot be in the past")
