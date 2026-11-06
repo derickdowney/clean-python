@@ -38,6 +38,11 @@ def test_Deadline_due_date_cannot_be_init_with_date_in_past():
 one_week_earlier: datetime = datetime.now() - timedelta(days=7)
 
 
-def test_Deadline_is_overdue():
-    overdue_deadline: Deadline = Deadline(one_week_earlier, True)
-    assert overdue_deadline.is_overdue()
+def test_Deadline_in_past_is_overdue():
+    past_deadline: Deadline = Deadline(one_week_earlier, True)
+    assert past_deadline.is_overdue()
+
+
+def test_Deadline_in_future_is_not_overdue():
+    future_deadline: Deadline = Deadline(one_week_later)
+    assert not future_deadline.is_overdue()
