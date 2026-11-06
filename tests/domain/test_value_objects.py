@@ -48,7 +48,12 @@ def test_Deadline_in_future_is_not_overdue():
     assert not future_deadline.is_overdue()
 
 
-def test_Deadline_time_remaining_returns_time_remaining():
+def test_Deadline_in_future_returns_correct_time_remaining():
     deadline: Deadline = Deadline(one_week_later)
     assert deadline.time_remaining().days == 6
     # this returns 6 instead of 7 because microseconds have passed since init!
+
+
+def test_Deadline_in_past_returns_0_time_remaining():
+    deadline: Deadline = Deadline(one_week_earlier, True)
+    assert deadline.time_remaining() == timedelta(0)

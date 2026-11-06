@@ -28,4 +28,4 @@ class Deadline:
         return datetime.now() > self.due_date
 
     def time_remaining(self) -> timedelta:
-        return self.due_date - datetime.now()
+        return max(timedelta(0), self.due_date - datetime.now())
