@@ -35,3 +35,9 @@ def test_Task_inits_by_default_with_status_TaskStatus_TODO():
 def test_Task_status_cannot_be_set_during_init():
     with pytest.raises(TypeError):
         Task("t", "d", status=TaskStatus.IN_PROGRESS)
+
+
+def test_Task_status_is_mutable():
+    task: Task = Task("t", "d")
+    task.status = TaskStatus.DONE
+    assert task.status == TaskStatus.DONE
