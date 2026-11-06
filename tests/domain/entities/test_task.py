@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from clean_python.domain.entities.task import Task
-from clean_python.domain.value_objects import Deadline, Priority
+from clean_python.domain.value_objects import Deadline, Priority, TaskStatus
 
 
 def test_Task_init_requires_title_and_description():
@@ -24,3 +24,7 @@ def test_Task_priority_is_mutable():
     task: Task = Task("t", "d", priority=Priority.HIGH)
     task.priority = Priority.LOW
     assert task.priority == Priority.LOW
+
+
+def test_Task_inits_by_default_with_status_TaskStatus_TODO():
+    assert Task("t", "d").status == TaskStatus.TODO

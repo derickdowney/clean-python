@@ -1,7 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from clean_python.domain.entities.entity import Entity
-from clean_python.domain.value_objects import Deadline, Priority
+from clean_python.domain.value_objects import Deadline, Priority, TaskStatus
 
 
 @dataclass
@@ -10,3 +10,4 @@ class Task(Entity):
     description: str
     due_date: Deadline | None = None
     priority: Priority = Priority.MEDIUM
+    status: TaskStatus = field(default=TaskStatus.TODO)
