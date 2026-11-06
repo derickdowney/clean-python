@@ -10,4 +10,4 @@ class Task(Entity):
     description: str
     due_date: Deadline | None = None
     priority: Priority = Priority.MEDIUM
-    status: TaskStatus = field(default=TaskStatus.TODO)
+    status: TaskStatus = field(default=TaskStatus.TODO, init=False)

@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+import pytest
+
 from clean_python.domain.entities.task import Task
 from clean_python.domain.value_objects import Deadline, Priority, TaskStatus
 
@@ -28,3 +30,8 @@ def test_Task_priority_is_mutable():
 
 def test_Task_inits_by_default_with_status_TaskStatus_TODO():
     assert Task("t", "d").status == TaskStatus.TODO
+
+
+def test_Task_status_cannot_be_set_during_init():
+    with pytest.raises(TypeError):
+        Task("t", "d", status=TaskStatus.IN_PROGRESS)
