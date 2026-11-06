@@ -18,7 +18,11 @@ class Priority(Enum):
 @dataclass(frozen=True)
 class Deadline:
     due_date: datetime
+    allow_due_date_in_past: bool = False  # for pytest testing purposes
 
     def __post_init__(self):
-        if self.due_date < datetime.now():
+        if self.due_date < datetime.now() and not self.allow_due_date_in_past:
             raise ValueError("Deadline cannot be in the past")
+
+    def is_overdue(self) -> bool:
+        return datetime.now() > self.due_date

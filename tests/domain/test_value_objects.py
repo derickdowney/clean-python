@@ -33,3 +33,11 @@ def test_Deadline_due_date_is_frozen():
 def test_Deadline_due_date_cannot_be_init_with_date_in_past():
     with pytest.raises(ValueError):
         Deadline(datetime(1999, 1, 1))
+
+
+one_week_earlier: datetime = datetime.now() - timedelta(days=7)
+
+
+def test_Deadline_is_overdue():
+    overdue_deadline: Deadline = Deadline(one_week_earlier, True)
+    assert overdue_deadline.is_overdue()
