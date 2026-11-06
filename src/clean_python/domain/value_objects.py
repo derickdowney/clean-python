@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 
 
@@ -26,3 +26,6 @@ class Deadline:
 
     def is_overdue(self) -> bool:
         return datetime.now() > self.due_date
+
+    def time_remaining(self) -> timedelta:
+        return self.due_date - datetime.now()
