@@ -14,3 +14,13 @@ def test_Task_init_optionally_allows_due_date():
 
 def test_Task_inits_by_default_with_medium_priority():
     assert Task("t", "d").priority == Priority.MEDIUM
+
+
+def test_Task_priority_can_be_set_during_init():
+    assert Task("t", "d", priority=Priority.HIGH).priority == Priority.HIGH
+
+
+def test_Task_priority_is_mutable():
+    task: Task = Task("t", "d", priority=Priority.HIGH)
+    task.priority = Priority.LOW
+    assert task.priority == Priority.LOW
