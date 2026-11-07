@@ -16,3 +16,6 @@ class Task(Entity):
         if self.status != TaskStatus.TODO:
             raise ValueError("Only tasks with 'TODO' status can be started")
         self.status = TaskStatus.IN_PROGRESS
+
+    def complete(self) -> None:
+        self.status = TaskStatus.DONE

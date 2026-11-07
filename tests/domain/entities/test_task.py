@@ -6,6 +6,13 @@ from clean_python.domain.entities.task import Task
 from clean_python.domain.value_objects import Deadline, Priority, TaskStatus
 
 
+# Helper Functions
+def create_task() -> Task:
+    """Creates a valid Task() instance"""
+    return Task("title", "description")
+
+
+# Tests
 def test_Task_init_requires_title_and_description():
     assert Task("some title", "some description")
 
@@ -54,3 +61,9 @@ def test_Task_start_throws_ValueError_if_not_in_TODO_status():
     task.status = TaskStatus.IN_PROGRESS
     with pytest.raises(ValueError):
         task.start()
+
+
+def test_Task_complete_sets_status_to_DONE():
+    task: Task = create_task()
+    task.complete()
+    assert task.status == TaskStatus.DONE
