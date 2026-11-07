@@ -1,3 +1,4 @@
+import random
 from datetime import datetime, timedelta
 
 import pytest
@@ -103,3 +104,11 @@ def test_Task_create_urgent_task_returns_Task_with_high_priority():
 def test_Task_ensure_title_cannot_be_empty_during_init():
     with pytest.raises(ValueError):
         Task(" ", "d")
+
+
+def test_Task_ensure_description_cannot_exceed_500_characters_during_init():
+    long_desc: str = "".join(
+        random.choices("abc", k=501)
+    )  # picks between "a" "b" and "c" 501 times, joining each one to the str
+    with pytest.raises(ValueError):
+        Task("t", long_desc)

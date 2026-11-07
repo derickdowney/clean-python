@@ -20,6 +20,8 @@ class Task(Entity):
     def __post_init__(self):
         if not self.title.strip():
             raise ValueError("Task title cannot be empty")
+        if len(self.description) > 500:
+            raise ValueError("Task description cannot exceed 500 characters")
 
     """
     To create additional constructors for your @dataclass beyond just __init__,
