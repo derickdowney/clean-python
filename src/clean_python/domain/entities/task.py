@@ -11,3 +11,8 @@ class Task(Entity):
     due_date: Deadline | None = None
     priority: Priority = Priority.MEDIUM
     status: TaskStatus = field(default=TaskStatus.TODO, init=False)
+
+    def start(self) -> None:
+        if self.status != TaskStatus.TODO:
+            raise ValueError("Only tasks with 'TODO' status can be started")
+        self.status = TaskStatus.IN_PROGRESS

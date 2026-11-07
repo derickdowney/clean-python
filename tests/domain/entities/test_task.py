@@ -41,3 +41,16 @@ def test_Task_status_is_mutable():
     task: Task = Task("t", "d")
     task.status = TaskStatus.DONE
     assert task.status == TaskStatus.DONE
+
+
+def test_Task_start_sets_status_to_IN_PROGRESS():
+    task: Task = Task("t", "d")
+    task.start()
+    assert task.status == TaskStatus.IN_PROGRESS
+
+
+def test_Task_start_throws_ValueError_if_not_in_TODO_status():
+    task: Task = Task("t", "d")
+    task.status = TaskStatus.IN_PROGRESS
+    with pytest.raises(ValueError):
+        task.start()
