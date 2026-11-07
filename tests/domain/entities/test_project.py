@@ -74,3 +74,8 @@ def test_Project_remove_task_removes_task_from__tasks_dict():
     assert task in project.tasks
     project.remove_task(task.id)
     assert task not in project.tasks
+
+
+def test_Project_remove_task_raises_no_errors_if_task_id_is_missing():
+    project: Project = Project("n")
+    project.remove_task(uuid4())

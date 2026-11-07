@@ -18,8 +18,10 @@ class Project:
         self._tasks[task.id] = task
 
     # Note: Standard practice in Python is:
-    #   - Use "dict.del()" if you want KeyError raised if key is missing
-    #   - Use "dict.pop()" if you want no errors raised if key is missing
+    #   - Use "del d[key]" if you want KeyError raised if key is missing
+    #   - Use "d.pop(key)" if you want KeyError and to return popped entry
+    #   - Use "d.pop(key, None)" if you want no errors raised if key is missing
     def remove_task(self, task_id: UUID) -> None:
-        del self._tasks[task_id]
-        # self._tasks.pop(task_id, None)
+        # del self._tasks[task_id]
+        # self._tasks.pop(task_id)
+        self._tasks.pop(task_id, None)
