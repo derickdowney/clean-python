@@ -13,3 +13,6 @@ class Project:
     @property
     def tasks(self) -> list[Task]:
         return list(self._tasks.values())
+
+    def add_task(self, task: Task) -> None:
+        self._tasks[task.id] = task

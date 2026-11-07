@@ -48,7 +48,7 @@ def test_Project_name_and_description_are_mutable():
 
 
 def test_Project_tasks_property_returns_list_of_all_tasks_in__tasks_dict():
-    project: Project = Project("name", "desc")
+    project: Project = Project("name")
 
     task1: Task = Task("t1", "d1")
     project._tasks[task1.id] = task1
@@ -56,6 +56,12 @@ def test_Project_tasks_property_returns_list_of_all_tasks_in__tasks_dict():
     task2: Task = Task("t2", "d2")
     project._tasks[task2.id] = task2
 
-    tasks: list[Task] = project.tasks
-    assert task1 in tasks
-    assert task2 in tasks
+    assert task1 in project.tasks
+    assert task2 in project.tasks
+
+
+def test_Project_add_task_adds_task_to__tasks_dict():
+    project: Project = Project("n")
+    task: Task = Task("t", "d")
+    project.add_task(task)
+    assert task in project.tasks
