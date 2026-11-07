@@ -79,3 +79,15 @@ def test_Project_remove_task_removes_task_from__tasks_dict():
 def test_Project_remove_task_raises_no_errors_if_task_id_is_missing():
     project: Project = Project("n")
     project.remove_task(uuid4())
+
+
+def test_Project_get_task_with_id_if_task_exists():
+    project: Project = Project("n")
+    task: Task = Task("n", "d")
+    project.add_task(task)
+    assert project.get_task(task.id) == task
+
+
+def test_Project_get_task_returns_None_if_no_task_exists():
+    project: Project = Project("n")
+    assert project.get_task(uuid4()) is None

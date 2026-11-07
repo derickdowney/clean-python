@@ -25,3 +25,6 @@ class Project:
         # del self._tasks[task_id]
         # self._tasks.pop(task_id)
         self._tasks.pop(task_id, None)
+
+    def get_task(self, task_id: UUID) -> Task | None:
+        return self._tasks.get(task_id)
