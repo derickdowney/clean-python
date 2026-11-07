@@ -92,3 +92,9 @@ def test_Task_is_overdue_returns_False_when_due_date_in_future():
 def test_Task_is_overdue_returns_False_when_due_date_is_None():
     task: Task = Task("t", "d")  # This initializes with None by default
     assert task.is_overdue() == False
+
+
+def test_Task_create_urgent_task_returns_Task_with_high_priority():
+    task: Task = Task.create_urgent_task("t", "d")
+    assert isinstance(task, Task)
+    assert task.priority == Priority.HIGH

@@ -13,6 +13,17 @@ class Task(Entity):
     status: TaskStatus = field(default=TaskStatus.TODO, init=False)
 
     """
+    To create additional constructors for your @dataclass beyond just __init__,
+    use the @classmethod decorator and return a `cls(...)` instance.
+    """
+
+    @classmethod
+    def create_urgent_task(
+        cls, title: str, description: str, due_date: Deadline | None = None
+    ):
+        return cls(title, description, due_date, Priority.HIGH)
+
+    """
     These methods below are called "business rules" or "invariants."
     They are logic that is enforced at the entity level.
 
