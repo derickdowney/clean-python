@@ -33,3 +33,12 @@ def test_Project_name_and_description_are_accessible():
     project: Project = Project("someName", "someDescription")
     assert project.name == "someName"
     assert project.description == "someDescription"
+
+
+def test_Project_name_and_description_are_mutable():
+    project: Project = Project("name", "desc")
+    project.name = "newName"
+    assert project.name == "newName"
+
+    project.description = "newDesc"
+    assert project.description == "newDesc"
