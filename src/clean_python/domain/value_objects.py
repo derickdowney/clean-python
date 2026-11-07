@@ -1,6 +1,15 @@
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from enum import Enum
+
+"""
+    Note that "value objects" in Clean Architecture are:
+        - Always immutable. To change value, replace entire object.
+        - Equal to each other if they are same type and have same attributes.
+        - Represent domain concepts, making them first-class citizens in code.
+        - Custom primitives for your domain, instead of generic primitives.
+        - Easily testable.
+"""
 
 
 class TaskStatus(Enum):
