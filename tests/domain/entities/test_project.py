@@ -27,3 +27,9 @@ def test_Project_init_requires_a_name_during_init():
         Project()
     with pytest.raises(TypeError):
         Project(description="desc")
+
+
+def test_Project_name_and_description_are_accessible():
+    project: Project = Project("someName", "someDescription")
+    assert project.name == "someName"
+    assert project.description == "someDescription"
