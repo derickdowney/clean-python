@@ -1,6 +1,9 @@
+from uuid import uuid4
+
 import pytest
 
 from clean_python.domain.entities.project import Project
+from clean_python.domain.entities.task import Task
 
 """
 Note about TypeError vs. ValueError from Python's documentation:
@@ -42,3 +45,17 @@ def test_Project_name_and_description_are_mutable():
 
     project.description = "newDesc"
     assert project.description == "newDesc"
+
+
+def test_Project_tasks_property_returns_list_of_all_tasks_in__tasks_dict():
+    project: Project = Project("name", "desc")
+
+    task1: Task = Task("t1", "d1")
+    project._tasks[task1.id] = task1
+
+    task2: Task = Task("t2", "d2")
+    project._tasks[task2.id] = task2
+
+    tasks: list[Task] = project.tasks
+    assert task1 in tasks
+    assert task2 in tasks
