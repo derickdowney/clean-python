@@ -65,3 +65,12 @@ def test_Project_add_task_adds_task_to__tasks_dict():
     task: Task = Task("t", "d")
     project.add_task(task)
     assert task in project.tasks
+
+
+def test_Project_remove_task_removes_task_from__tasks_dict():
+    project: Project = Project("n")
+    task: Task = Task("t", "d")
+    project.add_task(task)
+    assert task in project.tasks
+    project.remove_task(task.id)
+    assert task not in project.tasks

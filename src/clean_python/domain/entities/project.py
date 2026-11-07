@@ -16,3 +16,10 @@ class Project:
 
     def add_task(self, task: Task) -> None:
         self._tasks[task.id] = task
+
+    # Note: Standard practice in Python is:
+    #   - Use "dict.del()" if you want KeyError raised if key is missing
+    #   - Use "dict.pop()" if you want no errors raised if key is missing
+    def remove_task(self, task_id: UUID) -> None:
+        del self._tasks[task_id]
+        # self._tasks.pop(task_id, None)
