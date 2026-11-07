@@ -12,6 +12,16 @@ class Task(Entity):
     priority: Priority = Priority.MEDIUM
     status: TaskStatus = field(default=TaskStatus.TODO, init=False)
 
+    """
+    These methods below are called "business rules" or "invariants."
+    They are logic that is enforced at the entity level.
+
+    There's a difference between "entity-level rules" like the ones below,
+    and "domain-level rules." For example, a rule like "a user can't have more
+    than five high-priority tasks at one time" would involve multiple tasks and
+    possibly user settings, so this would not belong in the Task entity.
+    """
+
     def start(self) -> None:
         if self.status != TaskStatus.TODO:
             raise ValueError("Only tasks with 'TODO' status can be started")
