@@ -3,6 +3,18 @@ from uuid import UUID
 
 from clean_python.domain.entities.task import Task
 
+"""
+In Domain-Driven Design, this type of class is referred to as an "aggregate."
+
+"Aggregates" are a cluster of domain objects encapsulated as a single unit.
+It helps to define a "transactional boundary" within our domain.
+
+Aggregates should be designed to be as small as possible, otherwise they may
+impact performance. For example, in this Project aggregate, if our `_tasks`
+dictionary grows too large, we'd need to consider "pagination" or "lazy loading"
+strategies when accessing them.
+"""
+
 
 @dataclass(eq=False)
 class Project:
