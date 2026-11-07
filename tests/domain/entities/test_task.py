@@ -98,3 +98,8 @@ def test_Task_create_urgent_task_returns_Task_with_high_priority():
     task: Task = Task.create_urgent_task("t", "d")
     assert isinstance(task, Task)
     assert task.priority == Priority.HIGH
+
+
+def test_Task_ensure_title_cannot_be_empty_during_init():
+    with pytest.raises(ValueError):
+        Task(" ", "d")

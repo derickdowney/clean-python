@@ -13,6 +13,15 @@ class Task(Entity):
     status: TaskStatus = field(default=TaskStatus.TODO, init=False)
 
     """
+    To perform additional initialization operations after @dataclass's
+    standard __init__ operations, use the __post_init__ dunder method.
+    """
+
+    def __post_init__(self):
+        if not self.title.strip():
+            raise ValueError("Task title cannot be empty")
+
+    """
     To create additional constructors for your @dataclass beyond just __init__,
     use the @classmethod decorator and return a `cls(...)` instance.
     """
