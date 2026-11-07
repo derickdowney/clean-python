@@ -4,6 +4,7 @@ import pytest
 
 from clean_python.domain.entities.task import Task
 from clean_python.domain.value_objects import Deadline, Priority, TaskStatus
+from tests.domain.test_value_objects import one_week_earlier, one_week_later
 
 
 # Helper Functions
@@ -74,3 +75,20 @@ def test_Task_complete_raises_ValueError_if_already_in_DONE_status():
     task.status = TaskStatus.DONE
     with pytest.raises(ValueError):
         task.complete()
+
+
+def test_Task_is_overdue_returns_true_when_due_date_in_past():
+    task: Task = create_task()
+    task.due_date = Deadline(one_week_earlier, True)
+    assert task.is_overdue() == True
+
+
+def test_Task_is_overdue_returns_False_when_due_date_in_future():
+    task: Task = Task("t", "d")
+    task.due_date = Deadline(one_week_later)
+    assert task.is_overdue() == False
+
+
+def test_Task_is_overdue_returns_False_when_due_date_is_None():
+    task: Task = Task("t", "d")  # This initializes with None by default
+    assert task.is_overdue() == False

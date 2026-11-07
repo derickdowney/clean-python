@@ -21,3 +21,6 @@ class Task(Entity):
         if self.status == TaskStatus.DONE:
             raise ValueError("Task is already completed")
         self.status = TaskStatus.DONE
+
+    def is_overdue(self) -> bool:
+        return self.due_date is not None and self.due_date.is_overdue()
