@@ -67,3 +67,10 @@ def test_Task_complete_sets_status_to_DONE():
     task: Task = create_task()
     task.complete()
     assert task.status == TaskStatus.DONE
+
+
+def test_Task_complete_raises_ValueError_if_already_in_DONE_status():
+    task: Task = create_task()
+    task.status = TaskStatus.DONE
+    with pytest.raises(ValueError):
+        task.complete()

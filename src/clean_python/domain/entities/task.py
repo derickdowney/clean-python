@@ -18,4 +18,6 @@ class Task(Entity):
         self.status = TaskStatus.IN_PROGRESS
 
     def complete(self) -> None:
+        if self.status == TaskStatus.DONE:
+            raise ValueError("Task is already completed")
         self.status = TaskStatus.DONE
