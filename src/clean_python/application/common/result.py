@@ -22,6 +22,10 @@ class Error:
             code=ErrorCode.NOT_FOUND, message=f"{entity} with id {entity_id} not found"
         )
 
+    @classmethod
+    def validation_error(cls, message: str) -> Error:
+        return cls(code=ErrorCode.VALIDATION_ERROR, message=message)
+
 
 @dataclass(frozen=True)
 class Result:
