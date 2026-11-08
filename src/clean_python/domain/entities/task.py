@@ -1,4 +1,6 @@
 from dataclasses import dataclass, field
+from datetime import datetime
+from uuid import UUID
 
 from clean_python.domain.entities.entity import Entity
 from clean_python.domain.value_objects import Deadline, Priority, TaskStatus
@@ -11,6 +13,9 @@ class Task(Entity):
     due_date: Deadline | None = None
     priority: Priority = Priority.MEDIUM
     status: TaskStatus = field(default=TaskStatus.TODO, init=False)
+    completed_at: datetime | None = field(default=None, init=False)
+    completion_notes: str | None = field(default=None, init=False)
+    project_id: UUID | None = field(default=None, init=False)
 
     """
     To perform additional initialization operations after @dataclass's
@@ -49,10 +54,12 @@ class Task(Entity):
             raise ValueError("Only tasks with 'TODO' status can be started")
         self.status = TaskStatus.IN_PROGRESS
 
-    def complete(self) -> None:
+    def complete(self, notes: str | None = None) -> None:
         if self.status == TaskStatus.DONE:
             raise ValueError("Task is already completed")
         self.status = TaskStatus.DONE
+        self.completed_at = datetime.now()
+        self.completion_notes = notes
 
     def is_overdue(self) -> bool:
         return self.due_date is not None and self.due_date.is_overdue()
