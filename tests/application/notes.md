@@ -23,3 +23,11 @@ Distinct resposibilities of the Application layer: (p. 111)
     - Converting external data formats to domain formats
     - Transforming domain objects for external presentation
     - Managing cross-boundary communication
+
+# Expected Errors Only!!!
+"When implementing error handling in the Application layer, we explicitly catch
+and transform only expected domain and business errors into results. Thus, we
+don't have an `except Exception:` clause paired with the expected errors. This
+separation maintains clean architectural boundaires. Concerns such as global
+error handling remain in the outer layers." p. 114
+- TL;DR only look for known domain/business errors at applicaiton level

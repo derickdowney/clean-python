@@ -29,7 +29,10 @@ class Error:
 
 @dataclass(frozen=True)
 class Result:
-    """Represents success or failure of a use case execution"""
+    """Represents success or failure of a use case execution
+
+    Note that this can be used to translate domain-specific errors into
+    uniform application-level errors."""
 
     value: Any = None
     error: Error | None = None
