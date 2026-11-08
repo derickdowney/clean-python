@@ -34,6 +34,20 @@ class Result:
     value: Any = None
     error: Error | None = None
 
+    """
+        Note about Python:
+            - Use "property" when checking state, even if no local variable
+            - Use a method when doing an action or behavior
+    """
+
+    @property
+    def is_success(self) -> bool:
+        return self.error is None
+
+    @classmethod
+    def success(cls, value: Any) -> Result:
+        return cls(value=value)
+
     @classmethod
     def failure(cls, error: Error) -> Result:
         return cls(error=error)
