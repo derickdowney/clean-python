@@ -24,6 +24,7 @@ Distinct resposibilities of the Application layer: (p. 111)
     - Transforming domain objects for external presentation
     - Managing cross-boundary communication
 
+
 # Expected Errors Only!!!
 "When implementing error handling in the Application layer, we explicitly catch
 and transform only expected domain and business errors into results. Thus, we
@@ -31,3 +32,18 @@ don't have an `except Exception:` clause paired with the expected errors. This
 separation maintains clean architectural boundaires. Concerns such as global
 error handling remain in the outer layers." p. 114
 - TL;DR only look for known domain/business errors at applicaiton level
+
+
+# DTOs (Data Transfer Objects)
+DTOs validate and transform input into formats our domain can process.
+Use cases then take the input and orchestrate the requires domain operation.
+Use cases then return another "Result" DTO with either success or failure.
+If original input came from an HTTP request, then "Interface Adapters layer"
+would map the Result DTO to an appropriate HTTP response.
+
+
+# Use Case Interactors
+- Primary orchestrators
+- Implement specific business operations
+- Manage transactions and coordinate domain objects
+- Ensure each operation is focused and its execution is consistent
