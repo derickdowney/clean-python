@@ -1,0 +1,11 @@
+from clean_python.application.common.result import Error, ErrorCode, Result
+from clean_python.domain.entities.task import Task
+
+
+def test_create_Result_failure_with_NOT_FOUND_error():
+    task: Task = Task("t", "d")
+    entity_type = str(type(task))
+    entity_id = str(task.id)
+    failure: Result = Result.failure(Error.not_found(entity_type, entity_id))
+    assert failure.error is not None
+    assert failure.error.code == ErrorCode.NOT_FOUND
