@@ -1,4 +1,4 @@
-local function rerun_pixi_tests()
+local function run_pytest()
     -- Remember the window we started in
     local orig_win = vim.api.nvim_get_current_win()
 
@@ -16,7 +16,7 @@ local function rerun_pixi_tests()
 
         vim.api.nvim_set_current_win(target_win)
         vim.api.nvim_input("i")
-        vim.api.nvim_input("clear && pytest<CR>")
+        vim.api.nvim_input("clear && python -m pytest<CR>")
 
         -- Return after the command has been submitted
         vim.schedule(function()
@@ -28,5 +28,5 @@ local function rerun_pixi_tests()
 end
 
 vim.keymap.set("n", "0-", function()
-    rerun_pixi_tests()
-end, { desc = "Rerun pixi tests" })
+    run_pytest()
+end, { desc = "Run pytest" })
