@@ -9,6 +9,7 @@ def test_create_Result_failure_with_NOT_FOUND_error():
     failure: Result = Result.failure(Error.not_found(entity_type, entity_id))
     assert failure.error is not None
     assert failure.error.code == ErrorCode.NOT_FOUND
+    assert failure.error.details is None
 
 
 def test_create_Result_failure_with_VALIDATION_ERROR_error():
@@ -16,3 +17,4 @@ def test_create_Result_failure_with_VALIDATION_ERROR_error():
     assert failure.error is not None
     assert failure.error.code == ErrorCode.VALIDATION_ERROR
     assert failure.error.message == "invalid"
+    assert failure.error.details is None
