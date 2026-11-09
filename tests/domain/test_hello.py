@@ -1,4 +1,4 @@
-from clean_python.domain.entities.hello import hello
+from clean_python.domain.hello import hello
 
 
 def test_hello():
