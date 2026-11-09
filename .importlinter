@@ -1,0 +1,26 @@
+[importlinter]
+root_package = clean_python
+
+[importlinter:contract:no-cycles]
+name = No cycles in clean-python
+type = acyclic_siblings
+ancestors = clean_python
+
+[importlinter:contract:infrastructure-layering]
+name = Enforce infrastructure->application->domain layering
+type = layers
+layers =
+    clean_python.infrastructure
+    clean_python.application
+    clean_python.domain
+
+[importlinter:contract:interface-layering]
+name = Enforce interface->application->domain layering
+type = layers
+layers =
+    interfaces
+    application
+    domain
+;NOTE: "containers" just adds "clean_python" before each layer name
+containers =
+    clean_python

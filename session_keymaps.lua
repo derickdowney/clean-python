@@ -16,7 +16,7 @@ local function run_pytest()
 
         vim.api.nvim_set_current_win(target_win)
         vim.api.nvim_input("i")
-        vim.api.nvim_input("clear && python -m pytest<CR>")
+        vim.api.nvim_input("clear && lint-imports && python -m pytest<CR>")
 
         -- Return after the command has been submitted
         vim.schedule(function()
