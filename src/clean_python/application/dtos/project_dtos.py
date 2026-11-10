@@ -14,3 +14,5 @@ class CompleteProjectRequest:
         """Validate request data"""
         if not self.project_id.strip():
             raise ValidationError("Project ID is required")
+        if self.completion_notes and len(self.completion_notes) > 1000:
+            raise ValidationError("Completion notes cannot exceed 1000 characters")
