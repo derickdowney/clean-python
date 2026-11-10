@@ -35,3 +35,9 @@ def test_CompleteProjectRequest_to_execution_params_converts_str_to_UUID():
     assert exec_params["project_id"]
     assert type(exec_params["project_id"]) == UUID
     assert exec_params["project_id"] == id
+
+
+def test_to_execution_params_raises_ValueError_if_id_not_UUID():
+    request: CompleteProjectRequest = CompleteProjectRequest("not a UUID")
+    with pytest.raises(ValueError):
+        request.to_execution_params()
