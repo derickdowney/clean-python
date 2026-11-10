@@ -1,4 +1,6 @@
 import random
+from typing import Any
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -24,3 +26,12 @@ def test_CompleteProjectRequest_raises_ValidationError_long_completion_notes():
     with pytest.raises(ValidationError):
         note_1001_chars_long: str = "".join(random.choices("abc", k=1001))
         CompleteProjectRequest("project_id", note_1001_chars_long)
+
+
+def test_CompleteProjectRequest_to_execution_params_converts_str_to_UUID():
+    id: UUID = uuid4()
+    request: CompleteProjectRequest = CompleteProjectRequest(str(id))
+    exec_params: dict[str, Any] = request.to_execution_params()
+    assert exec_params["project_id"]
+    assert type(exec_params["project_id"]) == UUID
+    assert exec_params["project_id"] == id

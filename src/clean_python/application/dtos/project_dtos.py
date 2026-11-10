@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 from clean_python.domain.exceptions import ValidationError
 
@@ -16,3 +17,10 @@ class CompleteProjectRequest:
             raise ValidationError("Project ID is required")
         if self.completion_notes and len(self.completion_notes) > 1000:
             raise ValidationError("Completion notes cannot exceed 1000 characters")
+
+    def to_execution_params(self) -> dict:
+        """Convert validated request data to use case parameters"""
+        return {
+            "project_id": UUID(self.project_id),
+            "completion_notes": self.completion_notes,
+        }
