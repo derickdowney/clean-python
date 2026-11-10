@@ -16,6 +16,29 @@ It sits between the "Application layer" and "external interfaces."
 Controllers:
 - Handle inbound data flow from user interfaces to application
 - Serve as "entry points" for external requests into our system
+    - FastAPI will ultimately interact with the controller!!!
+- One controller should do all related usecases. For example:
+    - TaskController would handle `task_create_use_case`,
+      `task_complete_use_case`, `task_set_priority_use_case`, and so on.
+- Since controllers are at boundaries, they always return a success/error RESULT
+- Steps:
+    - Inits with "Use Case" dependencies and "Presenter" dependencies
+        - This is dependency injection
+    - Does a "handle_xxx_use_case" method call
+    - In method, converts external input into UseCase request format
+    - In method, calls `result = self.xxx_use_case.execute(request)`
+    - Then does:
+```Python
+if result.is_success:
+    view_model = self.presenter.present_task(result.value)
+    return OperationResult.succeed(view_model)
+
+error_view_model = self.presenter.present_error(
+    result.error.message,
+    str(result.error.code.name)
+)
+return OperationResult.fail(error_view_model.message, error_view_model.code)
+```
 
 Presenters:
 - Handle outbound data flow from application to user interfaces
@@ -57,5 +80,3 @@ Interface adapters layer data transformations:
         - One for task creation
         - One for task completion
         - One for task queries
-
-

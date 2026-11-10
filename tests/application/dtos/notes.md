@@ -24,6 +24,15 @@ Sam Keen uses a frozen @dataclass as his request model class,
 then the "__post_init__()" to validate the input,
 then a "to_execution_params()" to convert the outer input into inner input.
 
+**IMPORTANT:**
+While the Application Layer defines request models (for example,
+`CreateTaskRequest`), it is ultimately the Interface Adapter Layer's Controller
+who is responsible for the requests proper instantiation and use!!!
+So `TaskController` will ensure API inputs are able to become a proper
+`CreateTaskRequest`! The input validation seems to happen one-layer-up in all
+Clean Architecture structures.
+
+
 # Response Models
 Response models transform domain objects into structures suitable for
 external consumption. They control what data is exposed and how it is formatted.
