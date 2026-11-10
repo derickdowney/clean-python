@@ -25,3 +25,5 @@ Response models transform domain objects into structures suitable for
 external consumption. They control what data is exposed and how it is formatted.
 
 Sam Keen does this with a single @classmethod named `from_entity()`
+This is essentially a "special constructor" which creates an instance of the
+CompleteProjectResponse object with API-safe content.

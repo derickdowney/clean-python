@@ -8,6 +8,7 @@ from clean_python.application.dtos.project_dtos import (
     CompleteProjectRequest,
     CompleteProjectResponse,
 )
+from clean_python.domain.entities.project import Project
 from clean_python.domain.exceptions import ValidationError
 
 
@@ -36,7 +37,7 @@ def test_CompleteProjectRequest_to_execution_params_converts_str_to_UUID():
     request: CompleteProjectRequest = CompleteProjectRequest(str(id))
     exec_params: dict[str, Any] = request.to_execution_params()
     assert exec_params["project_id"]
-    assert type(exec_params["project_id"]) == UUID
+    assert isinstance(exec_params["project_id"], UUID)
     assert exec_params["project_id"] == id
 
 
@@ -49,3 +50,12 @@ def test_to_execution_params_raises_ValueError_if_id_not_UUID():
 def test_CompleteProjectResponse_init_arg_requirements():
     with pytest.raises(TypeError):
         CompleteProjectResponse()
+    CompleteProjectResponse("name", "desc", 1)
+
+
+def test_CompleteProjectResponse_from_entity_creates_obj_with_API_safe_data():
+    project: Project = Project("name")
+    response: CompleteProjectResponse = CompleteProjectResponse.from_entity(project)
+    assert isinstance(response.name, str)
+    assert isinstance(response.description, str)
+    assert isinstance(response.task_count, int)

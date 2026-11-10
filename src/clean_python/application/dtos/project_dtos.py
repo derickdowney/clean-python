@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
+from clean_python.domain.entities.project import Project
 from clean_python.domain.exceptions import ValidationError
 
 
@@ -30,9 +31,15 @@ class CompleteProjectRequest:
 class CompleteProjectResponse:
     """Data structure for project completion responses"""
 
-    id: str
-    status: str
-    completion_date: str
+    name: str
+    description: str
     task_count: int
-    completion_notes: str | None
-    pass
+
+    @classmethod
+    def from_entity(cls, project: Project) -> CompleteProjectResponse:
+        """Create response from domain entities"""
+        return cls(
+            name=project.name,
+            description=project.description,
+            task_count=len(project.tasks),
+        )
