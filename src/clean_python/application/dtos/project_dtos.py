@@ -24,3 +24,15 @@ class CompleteProjectRequest:
             "project_id": UUID(self.project_id),
             "completion_notes": self.completion_notes,
         }
+
+
+@dataclass(frozen=True)
+class CompleteProjectResponse:
+    """Data structure for project completion responses"""
+
+    id: str
+    status: str
+    completion_date: str
+    task_count: int
+    completion_notes: str | None
+    pass

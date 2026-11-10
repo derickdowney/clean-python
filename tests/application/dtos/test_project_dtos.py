@@ -4,7 +4,10 @@ from uuid import UUID, uuid4
 
 import pytest
 
-from clean_python.application.dtos.project_dtos import CompleteProjectRequest
+from clean_python.application.dtos.project_dtos import (
+    CompleteProjectRequest,
+    CompleteProjectResponse,
+)
 from clean_python.domain.exceptions import ValidationError
 
 
@@ -41,3 +44,8 @@ def test_to_execution_params_raises_ValueError_if_id_not_UUID():
     request: CompleteProjectRequest = CompleteProjectRequest("not a UUID")
     with pytest.raises(ValueError):
         request.to_execution_params()
+
+
+def test_CompleteProjectResponse_init_arg_requirements():
+    with pytest.raises(TypeError):
+        CompleteProjectResponse()
