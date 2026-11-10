@@ -1,9 +1,9 @@
 from clean_python.domain.entities.task import Task
-from tests.application.service_ports.fakes import FakeNotificationService
+from tests.application.service_ports.fakes import FakeNotificationPort
 
 
-def test_FakeNotificationService():
-    service: FakeNotificationService = FakeNotificationService()
+def test_FakeNotificationPort():
+    service: FakeNotificationPort = FakeNotificationPort()
     task_to_assign: Task = Task("t", "d")
     task_to_complete: Task = Task("t", "d")
     service.notify_task_assigned(task_to_assign.id)

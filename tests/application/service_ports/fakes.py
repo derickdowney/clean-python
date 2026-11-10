@@ -1,10 +1,10 @@
 from uuid import UUID
 
-from clean_python.application.service_ports.notifications import NotificationService
+from clean_python.application.service_ports.notifications import NotificationPort
 from clean_python.domain.entities.task import Task
 
 
-class FakeNotificationService(NotificationService):
+class FakeNotificationPort(NotificationPort):
     """Fake notfication service for testing"""
 
     def notify_task_assigned(self, task_id: UUID) -> None:

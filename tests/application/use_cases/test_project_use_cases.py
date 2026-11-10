@@ -1,6 +1,6 @@
 from clean_python.application.dtos.project_dtos import CompleteProjectRequest
 from clean_python.application.use_cases.project_use_cases import CompleteProjectUseCase
-from tests.application.service_ports.fakes import FakeNotificationService
+from tests.application.service_ports.fakes import FakeNotificationPort
 from tests.domain.repositories.fakes import FakeTaskRepository
 
 
@@ -12,5 +12,5 @@ def test_CompleteProjectUseCase():
 
     # request: CompleteProjectRequest = CompleteProjectRequest("name", "", 3)
     # use_case: CompleteProjectUseCase = CompleteProjectUseCase(
-    #     FakeTaskRepository(), FakeNotificationService()
+    #     FakeTaskRepository(), FakeNotificationPort()
     # )

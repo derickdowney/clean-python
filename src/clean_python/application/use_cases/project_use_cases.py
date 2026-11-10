@@ -5,7 +5,7 @@ from clean_python.application.dtos.project_dtos import (
     CompleteProjectRequest,
     CompleteProjectResponse,
 )
-from clean_python.application.service_ports.notifications import NotificationService
+from clean_python.application.service_ports.notifications import NotificationPort
 from clean_python.domain.entities.project import Project
 from clean_python.domain.exceptions import ProjectNotFoundError, ValidationError
 from clean_python.domain.repositories.task_repository import TaskRepository
@@ -14,7 +14,7 @@ from clean_python.domain.repositories.task_repository import TaskRepository
 @dataclass(frozen=True)
 class CompleteProjectUseCase:
     task_repo: TaskRepository
-    notification_service: NotificationService
+    notification_service: NotificationPort
 
     # Uses CompleteProjectRequest instead of discreet parameters
     def execute(self, request: CompleteProjectRequest) -> Result:

@@ -4,8 +4,8 @@ from uuid import UUID
 from clean_python.domain.entities.task import Task
 
 
-class NotificationService(ABC):
-    """Service interface for sending notifications"""
+class NotificationPort(ABC):
+    """Service port for sending notifications"""
 
     @abstractmethod
     def notify_task_assigned(self, task_id: UUID) -> None:
