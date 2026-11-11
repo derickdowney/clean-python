@@ -1,4 +1,3 @@
-import random
 from typing import Any
 from uuid import UUID, uuid4
 
@@ -28,7 +27,7 @@ def test_CompleteProjectRequest_with_empty_project_id_raises_ValidationError():
 
 def test_CompleteProjectRequest_raises_ValidationError_long_completion_notes():
     with pytest.raises(ValidationError):
-        note_1001_chars_long: str = "".join(random.choices("abc", k=1001))
+        note_1001_chars_long: str = "a" * 1001
         CompleteProjectRequest("project_id", note_1001_chars_long)
 
 

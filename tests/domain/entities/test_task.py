@@ -1,4 +1,3 @@
-import random
 from datetime import datetime, timedelta
 
 import pytest
@@ -107,8 +106,6 @@ def test_Task_ensure_title_cannot_be_empty_during_init():
 
 
 def test_Task_ensure_description_cannot_exceed_500_characters_during_init():
-    long_desc: str = "".join(
-        random.choices("abc", k=501)
-    )  # picks between "a" "b" and "c" 501 times, joining each one to the str
+    long_desc: str = "a" * 501
     with pytest.raises(ValueError):
         Task("t", long_desc)
