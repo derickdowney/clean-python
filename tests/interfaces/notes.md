@@ -112,3 +112,54 @@ As data moves through our architectural boundaries, it transforms each time:
     - If you do `[User]`, then you can call a field on that user later!
       Whereas if you use Object polymorphism, Object won't have that field!
 
+# Complex Presenter vs. Humble View Model Object
+View models use the **humble object pattern** which makes components as simple
+and devoid of complex logic as possible. This means they are basic views that do
+nothing more than "display pre-formatted data!" Examples:
+- A simple HTML template rendering pre-formatted data
+- A React component that only displays passed props
+- A CLI display function that prints formatted strings
+
+The means:
+- Presenter contains all presentation logic that is testable!
+- "Humble views" contain minimal logic that's hard to test
+
+# Example Presenter Interface Code
+Example Presenter interface:
+```Python
+class TaskPresenter(ABC):
+    """Abstract base presenter for task-related output."""
+
+    @abstractmethod
+    def present_task(self, task_response: TaskResponse) -> TaskViewModel:
+        """Convert task response to view model."""
+        pass
+
+    @abstractmethod
+    def present_error(self, error_msg: str, code: str | None = None) -> ErrorViewModel:
+        """Format error message for display."""
+        pass
+```
+
+# Example View Model Code
+Key principles when designing view models:
+- Use only primitive types (strings, numbers, booleans)
+- Pre-format all display text
+- Make no assumptions about the display mechanism
+- Remain immutable (notice the `frozen=True`)
+- Include only data needed for display
+
+Example View Model:
+```Python
+@dataclass(frozen=True)
+class TaskViewModel:
+    """View-specific representation of a task"""
+    id: str
+    title: str
+    description: str
+    status_display: str # Pre-formatted for display
+    priority_display: str # Pre-formatted for display
+    due_date_display: str | None # Pre-formatted for display
+    project_display: str | None # Pre-formatted project context
+    completion_info: str | None # Pre-formatted completion details
+
