@@ -12,6 +12,13 @@ core and the external interfaces.
 
 It sits between the "Application layer" and "external interfaces."
 
+Note: External services don't always require an adapter. For example, if you
+have a `TaskRepository(ABC)` defined in the Application Layer with a clear
+`get()` abstract method, then that might be enough for a
+`SqliteTaskRepository(TaskRepository)` implementation directly in Infrastructure
+layer! The key question for knowing when an adapter is needed is:
+    *Does this interaction need format conversion between layers?*
+
 # Controllers vs Presenters vs View Models
 Controllers:
 - Handle inbound data flow from user interfaces to application
@@ -58,6 +65,14 @@ Interface adapters layer data transformations:
 - Transforms between use case formats and external interface needs
 - Focuses on external interface coordination
 - Works with interface-specific formats and primitive types
+
+# Data Transformation Flow
+As data moves through our architectural boundaries, it transforms each time:
+1. External input validation and conversion
+2. Use case execution with domain types
+3. Success case transformation to view model
+4. Error case handling and formatting
+5. Validation error handling
 
 # Interaction Flow
 1. External requests flow through controllers
