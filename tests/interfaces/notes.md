@@ -80,3 +80,20 @@ Interface adapters layer data transformations:
         - One for task creation
         - One for task completion
         - One for task queries
+
+# OperationResult Class
+- Provides a standardized way to handle both success and failure cases
+- It uses `OperationResult[T]` generic which allows you to instantiate like:
+    - `OperationResult[User]`
+    - `OperationResult[TaskViewModel]`
+    - `OperationResult[Task]`
+- This generic makes it so that the class with either return:
+    - ErrorViewModel (because that field is static across all instances)
+    - or, whatever `[T]` class you specify during instantiation
+- These generics are like passing in an `Object` argument, except:
+    - Using an `Object` arg relies on runtime polymorphism
+    - Generics are compile-time type safety
+    - Object arg loses type safety and autocomplete; Generics retain them!
+    - If you do `[User]`, then you can call a field on that user later!
+      Whereas if you use Object polymorphism, Object won't have that field!
+

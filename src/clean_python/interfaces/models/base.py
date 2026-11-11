@@ -1,7 +1,5 @@
-from typing import Generic, TypeVar, Optional
 from dataclasses import dataclass
-
-T = TypeVar("T")
+from typing import Generic, TypeVar
 
 
 @dataclass(frozen=True)
@@ -14,11 +12,11 @@ class ErrorViewModel:
     """
 
     message: str
-    code: Optional[str] = None
+    code: str | None = None
 
 
 @dataclass
-class OperationResult(Generic[T]):
+class OperationResult[T]:
     """Represents the result of an operation that can either succeed with a value or fail with an error.
 
     This class implements the Either pattern, where a result can only be either a success
@@ -33,10 +31,10 @@ class OperationResult(Generic[T]):
         _error: The error details if the operation failed
     """
 
-    _success: Optional[T] = None
-    _error: Optional[ErrorViewModel] = None
+    _success: T | None = None
+    _error: ErrorViewModel | None = None
 
-    def __init__(self, success: Optional[T] = None, error: Optional[ErrorViewModel] = None):
+    def __init__(self, success: T | None = None, error: ErrorViewModel | None = None):
         """Initialize the result with either a success value or an error.
 
         Args:
@@ -46,7 +44,9 @@ class OperationResult(Generic[T]):
         Raises:
             ValueError: If neither or both success and error are provided
         """
-        if (success is None and error is None) or (success is not None and error is not None):
+        if (success is None and error is None) or (
+            success is not None and error is not None
+        ):
             raise ValueError("Either success or error must be provided, but not both")
         self._success = success
         self._error = error
@@ -79,7 +79,7 @@ class OperationResult(Generic[T]):
         return self._error
 
     @classmethod
-    def succeed(cls, value: T) -> "OperationResult[T]":
+    def succeed(cls, value: T) -> OperationResult[T]:
         """Creates a successful result with the given value.
 
         Args:
@@ -91,7 +91,7 @@ class OperationResult(Generic[T]):
         return cls(success=value)
 
     @classmethod
-    def fail(cls, message: str, code: Optional[str] = None) -> "OperationResult[T]":
+    def fail(cls, message: str, code: str | None = None) -> OperationResult[T]:
         """Creates a failed result with the given error message and optional code.
 
         Args:
