@@ -113,6 +113,11 @@ Try to do a counter app in the morning that makes:
 - ORM (could solve the "database interface stuff")
 - IAM is "user-based permissions"; when you interact with Amazon Web Service
 - Need to deploy to cloud!!! Deploy to AWS for experience.
+- Should use different configurations for dev/debug and prod/release
+- Integrate an external API... maybe send an email when counter hits 10?
+    - Some browser notification tool?
+- Use some kind of login system so only Derick can press the button!
+- Make it deployable to CLI and Web using clean architecture.
 
 i18n; when you make an application you can make it i18n
 - this is "internationalization language"
