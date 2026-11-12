@@ -47,3 +47,292 @@ def create_task(
         priority=priority,
     )
 ```
+
+
+#
+#
+# Beginning Testing Notes from Chapter 8 of "Clean Architecture with Python"
+#
+#
+
+# Testing and Clean Architecture
+Tightly coupled complex systems rely on brittle and slow "end-to-end" tests.
+Clean Architecture makes it easy to rely mostly on unit and integration tests.
+"...Clean Architecture enables us to build substantial confidence in our system
+through focused unit and integration tests alone." p. 189
+
+Unit tests = fast and a lot of them
+Integration tests = not as fast and not as many.
+ - Tests interactions between components.
+End-to-end tests = small number to verify critical user workflows
+- Typically provide less precise feedback when failures occur
+
+Clean Architecture makes setup slow at first, and testing extremely easy later.
+Coupled architectures make setup fast, then testing extremely hard later.
+
+# Tests as Clients
+**Tests are clients of our code.**
+"If we find that our tests are difficult to write or require complex setup,
+this often signals that our production code needs improvement...
+These signals serve as early warnings, helping us identify and correct
+architectural violations before they become deeply embedded in our codebase."
+p. 190
+
+# Arrange-Act-Assert (AAA) Pattern
+Proposed by Bill Wake in 2011:
+https://xp123.com/3a-arrange-act-assert/
+
+Sam Keen lays out tests with AAA comments like:
+```Python
+def test_something():
+    """Test that tests something"""
+    # Arrange
+    task = Task()
+
+    # Act
+    task.something()
+
+    # Assert
+    assert task.something is not None
+```
+
+# Test Double Tools in Python, and Mocks
+**Test Doubles** act as dependency replacements for components under test.
+Python's `unittest.mock` library provides powerful tools for creating test
+doubles, and integrates seamlessly with `pytest`
+
+```Python
+from unittest.mock import Mock
+
+# Create a mock object that records calls and can return present values
+mock_repo = Mock()
+# Configure the response we want
+mock_repo.get.return_value = some_task
+# Call will return some_task
+mock_repo.get(123)
+# Verify the call happened exactly once
+mock_repo.get.assert_called_once()
+
+# Mocks track all interaction details
+# Shows what arguments were passed
+print(mock_repo.get.call_args)
+# Shows how many times it was called
+print(mock_repo.get.call_count)
+```
+
+# Mocks Instead of Dependencies
+A "task completion" use case requires both a repository to persist change
+and a notification service to alert stakeholders. **Both of these can be mocks!**
+
+```Python
+def test_successful_task_completion():
+    """Test task completion using mock dependencies."""
+    # Arrange
+    task = Task(
+        title="Test task",
+        description="Test description",
+        project_id=UUID('12345678-1234-5678-1234-567812345678'),
+    )
+    task_repo = Mock()
+    task_repo.get.return_value = task
+    notification_service = Mock()
+
+    use_case = CompleteTaskUseCase(
+        task_repository=task_repo,
+        notification_service=notification_service
+    )
+    request = CompleteTaskrequest(task_id=str(task.id))
+
+    # Act
+    result = use_case.execute(request)
+
+    # Assert
+    assert result.is_success
+    task_repo.save.assert_called_once_with(task)
+    notification_service
+        .notify_task_completed
+        .assert_called_once_with(task)
+```
+
+# Testing Data Translation of Interface Adapters
+## Loose Mock vs Strict Mock
+When you pass a class into the `spec` arg of the `Mock` class, then the mock
+will only let you call methods actually within that passed-in class!
+This enables us to "catch not just behavioral issues but also contract violations!"
+(p. 199)
+
+```Python
+class MyClass:
+    def existing_method(self):
+        pass
+
+loose_mock = Mock()
+loose_mock.existing_method() # No error raised
+loose_mock.non_existent_method() # No error raised
+
+strict_mock = Mock(spec=MyClass)
+strict_mock.existing_method() # No error raised
+strict_mock.non_existent_method() # Raises AttributeError
+```
+## Interface Adapter Test
+Example here: https://github.com/PacktPublishing/Clean-Architecture-with-Python/blob/3459f4bcd6b7b63c5960e26720ffd05981b48736/Chapter_8/TodoApp/tests/interface/controller/test_task_controller.py
+
+
+## Presenter Tests
+This test ensures proper formatting of task completion dates into human-readable
+strings for CLI:
+https://github.com/PacktPublishing/Clean-Architecture-with-Python/blob/3459f4bcd6b7b63c5960e26720ffd05981b48736/Chapter_8/TodoApp/tests/interface/presenters/test_cli.py
+
+Notice that this test allows us to test everything with no mocks! We just use
+the `CliTaskPresenter()` dependency directly since that's what we're testing.
+This test is not entangled with anything involving business rules, persistence,
+or anything else!
+
+In the link above, the top test just tests the "completion time" formatting.
+However the bottom test tests **the entire presenter output in one test!**
+
+# Integration Tests (Across Architectural Boundaries)
+"Rather than exhaustively testing every combination of components, we focus on
+key boundary crossings, particularly those involving infrastructure like
+persistence or external services." p 201
+
+## Pytest Fixtures as Factories, and tmp_path
+Use `@pytest.fixture` to create a factory helper function?
+The `tmp_path` variable is a **pytest builtin** for temp dirs during tests.
+By putting it as an arg in a method, then pytest generates a unique temporary
+path for your test.
+```Python
+@pytest.fixture
+def repository(tmp_path): 
+    """Create repository using temporary path as data_dir"""
+    return FileTaskRepository(data_dir=tmp_path)
+```
+
+## File System Repository Test using Fixtures
+The example in the book is wrong, so here's a Gemini-generated test that
+leverages a fixture like the one above. Notice how **fixtures can be
+passed into pytest tests as an argument!!** No need to call `repositories()`
+function within the `test_` function. Instead just pass `repositories` in
+as an argument.
+```Python
+@pytest.fixture
+def repositories(tmp_path):
+    """Provide both connected task and project repositories."""
+    task_repo = FileTaskRepository(tmp_path)
+    project_repo = FileProjectRepository(tmp_path)
+    project_repo.set_task_repository(task_repo)
+    return task_repo, project_repo
+
+
+def test_repo_handles_project_task_relationships(repositories):
+    """Integration test verifying repository handles entity relationships."""
+    task_repo, project_repo = repositories
+
+    # Create project and tasks through the repository
+    project = Project(name="Test Project", description="Testing relationships")
+    project_repo.save(project)
+
+    task = Task(title="Test Task", description="Testing relationships", project_id=project.id)
+    task_repo.save(task)
+
+    # Act - Load project with its tasks
+    loaded_project = project_repo.get(project.id)
+
+    # Assert
+    assert len(loaded_project.tasks) == 1
+    assert loaded_project.tasks[0].title == "Test Task"
+```
+
+
+## Architectural Guarantees
+An example of an "architectural guarantee" is that the Todo app creates and
+persists the "inbox" project automatically.
+He uses an integration test that has two separate repository instances
+pointing to the same data directory. (I don't understand though...)
+
+
+## Task Persistence
+First, he has a unit test for task creation where all dependencies are mocked.
+Then, he has an integration test that confirms that task creation ACTUALLY
+persists into a database:
+https://github.com/PacktPublishing/Clean-Architecture-with-Python/blob/3459f4bcd6b7b63c5960e26720ffd05981b48736/Chapter_8/chapter_code_excerpts/10_def%20test_task_creation_with_persistence.py
+However, he's still mocking the `notification_service` since this is just testing
+persistence!
+
+# Tools and Patterns for Test Maintenance
+
+## Test Dependencies
+`domain` tests shouldn't need to important anything from `application` layers
+or higher.
+
+## Using Parameterized Tests
+A **parameterized test** allows you to run the same function over and over
+with different parameters each time. This makes it so that you can, for example,
+run a test under 10 different conditions, and catch an error specifically with
+just test run #7.
+
+Using the `ids` parameter makes test failures more meaningful.
+In the code below, instead of seeing a failure with:
+    - `test_task_creation_scenarios[0]`
+Pytest will instead show us a failure with:
+    - `test_task_creation_scenarios[basic-task]`
+
+Example of a parameterized test:
+```Python
+from uuid import UUID
+import pytest
+from unittest.mock import Mock
+
+
+@pytest.mark.parametrize(
+    "request_data,expected_behavior",
+    [
+        # basic-task (defaults to inbox)
+        (
+            # request_data
+            {"title": "Test Task", "description": "Basic creation"},
+
+            # expected_behavior
+            {"project_type": ProjectType.INBOX, "priority": Priority.MEDIUM}
+        ),
+
+        # project-task (assigned to specific project)
+        (
+            # request data
+            {
+                "title": "Project Task",
+                "description": "With project",
+                "project_id": "project-uuid"
+            }, 
+
+            # expected_behavior
+            {"project_type": ProjectType.REGULAR, "priority": Priority.MEDIUM}
+        ),
+        # priority-task
+        # ... data for task
+    ],
+    ids=["basic-task", "project-task", "priority-task"]
+)
+def test_task_creation_scenarios(request_data, expected_behavior):
+    """Test task creation use case handles various input scenarios correctly."""
+    # Arrange
+    task_repo = Mock(spec=TaskRepository)
+    project_repo = FileProjectRepository(tmp_path)  # Real project repo for INBOX
+    
+    use_case = CreateTaskUseCase(
+        task_repository=task_repo,
+        project_repository=project_repo
+    )
+    
+    # Act
+    result = use_case.execute(CreateTaskRequest(**request_data))
+    
+    # Assert
+    assert result.is_success
+    created_task = result.value
+    if expected_behavior["project_type"] == ProjectType.INBOX:
+        assert UUID(created_task.project_id) == project_repo.get_inbox().id
+    assert created_task.priority == expected_behavior["priority"]
+```
+
+# LEFT OFF ON PYTEST FIXTURES, PAGE 209

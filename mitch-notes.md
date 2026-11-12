@@ -118,6 +118,7 @@ Try to do a counter app in the morning that makes:
     - Some browser notification tool?
 - Use some kind of login system so only Derick can press the button!
 - Make it deployable to CLI and Web using clean architecture.
+- Use a mock during use_case testing to ensure no dependencies are needed!
 
 i18n; when you make an application you can make it i18n
 - this is "internationalization language"
