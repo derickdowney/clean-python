@@ -106,6 +106,8 @@ rebuild the DOM when needed.
 
 Try to do a counter app in the morning that makes:
 - React frontend
+    - Actually, first do a CLI! Then Flask app! Then React app! All simultaneously!
+    - Make the database shared across all. When you update CLI, it updates web!
 - FastAPI backend
 - Nginx, load balancer; traffic manager; web serving? Is it an HTTP server?
 - Uses Docker containers on the server
