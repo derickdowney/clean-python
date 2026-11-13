@@ -5,6 +5,7 @@ I asked ChatGPT for feedback on my TDD code. It had the following advice.
 - Use object factory in behavior tests
 - A failing testing suite can be good.
     - It can reveal that a fundamental contract has changed.
+- UPDATE!!!! Sam Keen says to use a fixture instead! See section # PYTEST FIXTURES!
 
 
 # Use a Factory when Instantiation Is Not Important
@@ -104,7 +105,7 @@ doubles, and integrates seamlessly with `pytest`
 ```Python
 from unittest.mock import Mock
 
-# Create a mock object that records calls and can return present values
+# Create a mock object that records calls and can return preset values
 mock_repo = Mock()
 # Configure the response we want
 mock_repo.get.return_value = some_task
@@ -262,14 +263,18 @@ persistence!
 # Tools and Patterns for Test Maintenance
 
 ## Test Dependencies
-`domain` tests shouldn't need to important anything from `application` layers
+`domain` tests shouldn't need to import anything from `application` layers
 or higher.
 
 ## Using Parameterized Tests
-A **parameterized test** allows you to run the same function over and over
+A **parameterized test** allows you to run the same test function over and over
 with different parameters each time. This makes it so that you can, for example,
 run a test under 10 different conditions, and catch an error specifically with
 just test run #7.
+
+Notice how `request_data` is entering the method as a dictionary, and thus
+you need to use the unpacking `**request_data` syntax to assign the entries
+to parameters for the `CreateTaskRequest()`.
 
 Using the `ids` parameter makes test failures more meaningful.
 In the code below, instead of seeing a failure with:
@@ -335,4 +340,109 @@ def test_task_creation_scenarios(request_data, expected_behavior):
     assert created_task.priority == expected_behavior["priority"]
 ```
 
-# LEFT OFF ON PYTEST FIXTURES, PAGE 209
+# PYTEST FIXTURES!
+As our testing suite grows:
+- Domain tests require clean entity instances
+- Use case tests need properly configured repositories and services
+- Interface tests need formatted request data
+The `pytest` fixture system paired with `conftest.py` files helps address these!
+
+Fixtures make it so your test stays focused on **behavior** not setup!!
+Plus if something changes in your system, you just update the fixture.
+
+You can have multiple `conftest.py` files in multiple directories.
+Their contents are inherited by all directories at that level and below.
+`tests/conftest.py` is used by all tests.
+`tests/domain/entities/conftest.py` is only used by Entity tests.
+
+**Fixtures must respect architectural boundaries!**
+Fixtures should only depend on inner layers, just like our app architecture!
+Application fixtures can depend on Domain fixtures, but not vice versa.
+
+```Python
+# test/conftest.py - Root fixtures available to all tests
+@pytest.fixture
+def sample_task_data():
+    """Provide basic task attributes for testing"""
+    return {
+        "title": "Test Task",
+        "description": "Sample task for testing",
+        "project_id": UUID('12345678-1234-5678-1234-567812345678'),
+    }
+
+# tests/domain/conftest.py - Domain layer fixtures
+@pytest.fixture
+def domain_task(sample_task_data):
+    """Provide a clean Task entity for domain tests."""
+    return Task(**sample_task_data)
+```
+
+# Freezegun for controlling time!
+Testing deadline calculations or time-based notifications requires careful
+handling of time. Instead of manipulating system time (which could potentially
+affect other tests), we can use the `freezegun` library.
+
+`freezegun` provides a context manager that sets a specific time:
+```Python
+def test_task_deadline_approaching():
+    """Test deadline notifications respect time boundaries."""
+    # Arrange
+    with freeze_time("2024-01-14 12:00:00"):
+        task = Task(
+            ...
+            # due date set for 2024-01-15
+            )
+
+    # Act
+    with freeze_time("2024-01-14 13:00:00"):
+        result = use_case.execute()
+
+    # Assert
+    assert result.is_success
+    notification_service.notify_task_deadline_approaching_assert_called_once()
+```
+
+# Run tests in random order with `pytest-random-order`
+There might be hidden dependencies in your tests.
+For example, the `notification_service` may keep a list of all pending
+notifications, which impacts other tests.
+Running tests in random order helps reveal these dependencies.
+
+To address this:
+    `pip install pytest-random-order` or `uv add pytest-random-order`
+
+Configure on every test:
+```toml
+# pyproject.toml
+[tool.pytest.ini_options]
+addopts = "--random-order"
+```
+
+After a test fails, you can force the same ordering by passing in a seed value:
+`pytest --random-order-seed=123456`
+
+
+You'll know seed because it says it at top like:
+```
+================================== test session starts ===================================
+platform darwin -- Python 3.15.0, pytest-9.2.0, pluggy-1.7.0
+Using --random-order-bucket=module
+Using --random-order-seed=557366
+```
+
+# Running tests in parallel
+Install `uv add pytest-xdist` to run tests in parallel and speed things up!
+
+Add the `-n auto` option to your `pytest` call to enable parallel tests:
+```toml
+[tool.pytest.ini_options]
+addopts = "--random-order -n auto" # random order AND parallel execution
+```
+This says "the number of CPU cores is automatically determined."
+
+Use `@pytest.mark.serial` to mark tests that must run sequentially
+Use `@pytest.mark.resource_group('global-cache')` to share test resources
+(I don't understand how either of these work, would need to investigate later)
+
+Without `pytest-xdist` installed, my 60 tests take 0.27 seconds
+With it installed, my 60 tests take 0.06 seconds

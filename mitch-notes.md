@@ -117,8 +117,9 @@ Try to do a counter app in the morning that makes:
 - Integrate an external API... maybe send an email when counter hits 10?
     - Some browser notification tool?
 - Use some kind of login system so only Derick can press the button!
-- Make it deployable to CLI and Web using clean architecture.
+- Make it run as both a CLI and Web using clean architecture.
 - Use a mock during use_case testing to ensure no dependencies are needed!
+- Use fixtures as factories in my testing suite, see tests/notes.md
 
 i18n; when you make an application you can make it i18n
 - this is "internationalization language"

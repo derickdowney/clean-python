@@ -12,6 +12,8 @@ authors = [
 requires-python = ">=3.15"
 dependencies = [
     "pytest>=9.2.0",
+    "pytest-random-order>=1.2.0",
+    "pytest-xdist>=3.8.0",
 ]
 
 [project.scripts]
@@ -24,6 +26,7 @@ build-backend = "uv_build"
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+addopts = "--random-order"
 
 [dependency-groups]
 dev = [
