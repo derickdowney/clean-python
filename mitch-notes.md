@@ -112,6 +112,8 @@ Try to do a counter app in the morning that makes:
 - Nginx, load balancer; traffic manager; web serving? Is it an HTTP server?
 - Uses Docker containers on the server
 - Setup observability with Honeycomb or Datadog
+    - Log according to Sam Keen's logging advice.
+    - Log at every architectural boundary
 - ORM (could solve the "database interface stuff")
 - IAM is "user-based permissions"; when you interact with Amazon Web Service
 - Need to deploy to cloud!!! Deploy to AWS for experience.
@@ -125,6 +127,7 @@ Try to do a counter app in the morning that makes:
 - Use WorkOS to only allow myself to click the button, but everyone can view
 - Redis and session data to keep track of darkmode / lightmode preferences
 - Create a GPUI version desktop app?
+- Use Pytest, plus Import Linter, plus pytest-random-order and pytest-xdist
 
 i18n; when you make an application you can make it i18n
 - this is "internationalization language"
