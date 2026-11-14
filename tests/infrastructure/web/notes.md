@@ -161,5 +161,134 @@ Clean Architecture says **treat templates purely as display structure**!!!
 Not all frameworks will have "formatting helpers."
 Be consistent and do all the formatting for all layers in the Presenters class.
 
-# Managing Web-Specific State
-# LEFT OFF HERE!!!!! p. 234
+# Managing Web Session Data
+"Session data and form state present unique challenges for maintaining
+Clean Architecture's boundaries."
+
+Anti-pattern:
+```Python
+class Task:
+    def complete(self, web_app_container):
+        # Wrong: task shouldn't know about web sessions!
+        self.completed_by = web_app_container.user.id
+```
+
+The correct pattern provided has nothing to do with the "completed_by"
+anti-pattern above. The only thing that has to do with "session data" in the
+correct pattern is that `flash(error.message, "error")` is a Flask function
+that stores a temporary notification message in the user's session.
+However it does capture the user's preference of "whether to show completed
+projects in the list of all projects", but that's captured as a query parameter,
+not specifically session data...
+https://github.com/PacktPublishing/Clean-Architecture-with-Python/blob/3459f4bcd6b7b63c5960e26720ffd05981b48736/Chapter_9/chapter_code_excerpts/10_flask_index_route.py
+
+Interesting to note that it always grabs the "inner app logic" by doing the
+`app = current_app.config["APP_CONTAINER"]`. I'm not sure what that is...
+
+# Web Form Handling and Validation
+A "validation" anti-pattern is to spread the validation logic across all
+templates, controllers, and domain entities. Instead, we should have:
+- Web Framework (Infrastructure Layer)
+    - Endpoint extracts user's arguments from query params or post request body
+    - Framework calls a `handle_` command on the `controller`, and forwards
+      exact arguments as standard basic Python types (str, int, None)
+    - Framework displays results from `interface.controller`
+    - **No real validation! This just extracts needed args and forwards them!**
+- Controller (Interface Layer)
+    - Receives the handle request
+    - Passes incoming args into an `application.DTO` Data Transfer Object.
+      This converts the data from basic types to Domain types.
+    - Calls the appropriate `application.use_case` with this DTO.
+    - Returns the results from the `use_case.execute()`
+    - **THIS CAPTURES EXCEPTIONS, BUT DOES NOT RAISE THEM**
+    - **No real validation!** Although it wraps everything in a `ValueError`
+      try-catch, because the DTO conversion process can return multiple
+      kinds of value errors if the user's incoming args are invalid. If this
+      "catch" is hit, then it presents the failure with a "VALIDATION_ERROR"
+      style of presenter.
+- DTO (Application Layer)
+    - **THIS IS WHERE ARG VALIDATION HAPPENS!!!**
+    - First, it stores the incoming args as fields.
+        - Note that they're stored as their "basic primitive type" like strings
+    - During `__post_init__` the incoming arguments are validated.
+      It raises a ton of `ValueError` throughout this validation process!
+      No other error is raised here! No business-rule errors
+    - Then, it has the method named `to_execution_params` which converts the
+      stored fields into the Domain types needed for use_case execution
+    - **THIS RAISES MANY ValueError EXCEPTIONS!!!***
+- Use Case (Application Layer)
+    - Receives the DTO as an argument, and calls `to_execution_params` on it
+      to receive actual args needed through this use_case function.
+    - **THIS CAPTURES EXCEPTIONS BUT DOES NOT RAISE THEM!!!**
+    - This orchestrates Domain Entities interaction with Service Ports and
+      Repositories. **THE SERVICE PORTS AND REPOSITORIES CAN RAISE VALUE ERROR
+      AND BUSINESS RULE EXCEPTIONS!!!**
+
+I CAPTURED ALL OF THIS AS A PDF IN THE ROOT OF THIS PROJECT!
+It is called: "validation_exception_handling_cheat_sheet.pdf"
+
+
+## Immediate Client-Side Web Form Validation
+In the example above, the web form content is not validated until it's submitted
+to our server and run through our core logic.
+
+However, we may want to give the user more instant "client-side" validation
+so the app feels snappier and gives a better UX.
+
+We can do this using something like the WTForms Python library. This library can
+mirror domain validation rules in the "view" layer, enabling responsive UX
+without duplicating validation logic.
+
+The key here is that **view-layer validations must remain thin wrappers around
+our core domain rules rather than introduce parallel validation logic!**
+
+# Flask Factory
+The Flask factory takes in configuration values, and also accepts an 
+"app container." An "app container" is a specific instance of your inner app
+logic, along with all of the external dependencies it needs (notifications,
+repositories, etc.)
+
+Example of flask factory: https://github.com/PacktPublishing/Clean-Architecture-with-Python/blob/3459f4bcd6b7b63c5960e26720ffd05981b48736/Chapter_9/chapter_code_excerpts/12_web_factory_method.py
+
+# Entrypoint (App Container + Web Container)
+NOTE:
+    - "Web Container" = container for our web framework's application
+    - "App Container" = container for all application logic below web framework
+
+`web_main.py` acts as the overall application entrypoint.
+
+It first creates the "application container" which contains all of our inner
+logic plus dependencies.
+
+It then creates the "Flask app" itself, referencing the application container.
+
+The Flask app then creates the web container application, which uses the
+"application container."
+
+It says this setup "...enables runtime configuration of concrete implementations
+through environment variables." p. 242
+This means that you can changes your application's task repository from
+"file" to "memory" just by editing your .env file!
+
+Here's the entire `web_main.py`! 
+```Python
+def main():
+    """Create and run the Flask web application."""
+    app_container = create_application(
+        notification_service=NotificationRecorder(),
+        task_presenter=WebTaskPresenter(),
+        project_presenter=WebProjectPresenter(),
+    )
+
+    flask_app = create_web_app(app_container)
+    flask_app.run(debug=True)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+
+Here's the environment config + script to run it:
+https://github.com/PacktPublishing/Clean-Architecture-with-Python/blob/3459f4bcd6b7b63c5960e26720ffd05981b48736/Chapter_9/chapter_code_excerpts/17_run_web_app.sh.txt
+

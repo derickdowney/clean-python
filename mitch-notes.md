@@ -122,6 +122,9 @@ Try to do a counter app in the morning that makes:
 - Make it run as both a CLI and Web using clean architecture.
 - Use a mock during use_case testing to ensure no dependencies are needed!
 - Use fixtures as factories in my testing suite, see tests/notes.md
+- Use WorkOS to only allow myself to click the button, but everyone can view
+- Redis and session data to keep track of darkmode / lightmode preferences
+- Create a GPUI version desktop app?
 
 i18n; when you make an application you can make it i18n
 - this is "internationalization language"
